@@ -1,0 +1,1075 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suraksha Kawach</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* General styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 18px;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #8262C7;
+            height: 100px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav {
+            background-color: #4A0072;
+            height: 50px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: white;
+            padding: 15px;
+            /* Added padding for better spacing */
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: none;
+            /* Initially hidden */
+            margin: 50px auto;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            width: 800px;
+            height: auto;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #d32f2f;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .contact-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .contact-item {
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .helpline-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #fff;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+        }
+
+        .helpline-card-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .helpline-card-content img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .helpline-card-content h2 {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .helpline-card-action {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .helpline-card-action a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        .helpline-card-action a:hover {
+            text-decoration: underline;
+        }
+
+        /* Set the height of the map */
+        .map {
+            height: 400px;
+            width: 800px;
+            /* Adjusted width */
+            border: 1px solid black;
+            margin: 0 auto;
+            /* Center the map */
+        }
+
+        /* Center the heading */
+        h1 {
+            text-align: center;
+        }
+
+        /* New styles for the additional content */
+        .contact-us,
+        .login-container {
+            display: none;
+            /* Initially hidden */
+            text-align: center;
+            height: 900px;
+            width: 800px;
+            border: 2px solid #4b0082;
+
+        }
+
+        .login-container {
+            background-color: #6aadcc;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            height: auto;
+            margin: 20px auto;
+            /* Center the login container */
+        }
+
+        .login-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .login-container input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login-container button {
+            background-color: #f8f6f5;
+            color: rgb(17, 16, 16);
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+
+        .secondary-options {
+            margin: 20px 0;
+        }
+
+        .secondary-options span {
+            display: block;
+            margin: 10px 0;
+            color: #080808;
+        }
+
+        .social-buttons img {
+            width: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .contact-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4b0082;
+            /* New background color */
+            color: white;
+            /* Text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            background-color: #6a5acd;
+            color: white;
+            width: 100%;
+        }
+
+        .map-name h2 {
+            font-size: 20px;
+            margin-top: 5px;
+            text-align: center;
+
+
+        }
+
+        #homeContent h2 {
+            font-weight: bold;
+            font-size: 50px;
+            margin-top: 100px;
+            color: #4A0072;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+
+        }
+
+        #homeContent a {
+            background-color: #d32f2f;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            padding: 10px 30px;
+            display: ruby-base;
+            margin-top: -50px;
+            margin-bottom: 50px;
+
+        }
+
+        .home-box {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 50px;
+            margin-top: 50px;
+        }
+
+        .box {
+            box-shadow: 1px 1px 20px#b6b5b5;
+            padding: 10px;
+            margin: 10px 10px;
+            text-align: center;
+            width: 33%;
+            border-radius: 5px;
+        }
+
+        .box h3 {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+        }
+
+        .box p {
+            margin-top: -15px;
+        }
+
+        .about-text h3 {
+            color: #4b0082;
+            text-align: center
+        }
+
+        .about-text h3 {
+            color: #4b0082;
+            margin-top: 40px;
+            text-align: center;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .about-text h3 {
+            color: #4b0082;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        .objectives {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .objective-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .objective-item h4 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .objective-item p {
+            font-size: 14px;
+            margin: 5px 0 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left !important;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin-top: 15px;
+            color: #666;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .social-login {
+            margin: 20px 0;
+        }
+
+        .social-login img {
+            width: 3%;
+        }
+
+        .social-button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .google {
+            background-color: #db4437;
+            color: white;
+        }
+
+        .microsoft {
+            background-color: #0078d4;
+            color: white;
+        }
+
+
+        .login-text {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        #login {
+            margin: 50px 0px;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="https://i.imgur.com/6Yxc6EU.png" height="100"
+            style="display: inline; vertical-align: middle;">&nbsp;&nbsp;&nbsp;&nbsp;
+        <h1 style="display: inline; vertical-align: middle;">सुरक्षा</h1>
+        <h2 style="display: inline; vertical-align: middle;">KAWACH</h2>
+    </div>
+    <div class="nav">
+        <a href="#" onclick="showHome()">HOME</a>
+        <a href="#" onclick="showSOS()">SOS</a>
+        <a href="#" onclick="showHelpline()">Helpline Number</a>
+        <a href="#" onclick="showMap()">Safe areas</a>
+        <a href="#" onclick="showAboutUS()">About Us</a>
+        <a href="#" onclick="showContactUs()">Contact Us</a>
+        <a href="#" onclick="showLogin()">Login</a>
+    </div>
+    <div class="home" id="main">
+        <div id="homeContent" style="text-align: center;">
+            <h2>Your Safety, Our Priority</h2>
+            <a href="#">Emergency SOS</a>
+
+            <div class="home-box">
+                <div class="box">
+                    <h3>Live Location Sharing</h3>
+                    <p>Share your location with trusted contacts instantiy</p>
+                </div>
+                <div class="box">
+                    <h3>Helpline Numbers</h3>
+                    <p>Quick access to emergency contacts ans police.</p>
+                </div>
+                <div class="box">
+                    <h3>Safe Areas</h3>
+                    <p>Find safe zones and police stations near you</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div id="sosContent" class="container">
+        <h1>🚨 SOS Alert System</h1>
+        <input type="text" id="contactName" placeholder="Contact Name">
+        <input type="tel" id="contactNumber" placeholder="Emergency Contact Number">
+        <button onclick="addContact()">Add Emergency Contact</button>
+        <div id="contactsList" class="contact-list"></div>
+        <button onclick="sendSOSAlert()" style="margin-top: 20px; background-color: #ff5722;">
+            🆘 SEND EMERGENCY ALERT
+        </button>
+        <div id="message"></div>
+    </div>
+
+    <div id="helplineContent" class="container" style="display: none;">
+        <h1 align="center">Helpline Numbers</h1>
+        <p align="center">In case of an emergency call on appropriate numbers to help</p>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/jVm494v.png" alt="Emergency Icon">
+                <div>
+                    <h2>112</h2>
+                    <h2>National helpline</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:112">📞</a>
+            </div>
+        </div>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/xWQcjDU.png" alt="Emergency Icon">
+                <div>
+                    <h2>108</h2>
+                    <h2>Ambulance</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:108">📞</a>
+            </div>
+        </div>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/LasBFXR.jpeg" alt="Emergency Icon">
+                <div>
+                    <h2>102</h2>
+                    <h2>Pregnancy Medic</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:102">📞</a>
+            </div>
+        </div>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/sdAq45B.jpeg" alt="Emergency Icon">
+                <div>
+                    <h2>101</h2>
+                    <h2>Fire Service</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:101">📞</a>
+            </div>
+        </div>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/1K8ndBj.jpeg" alt="Emergency Icon">
+                <div>
+                    <h2>100</h2>
+                    <h2>Police</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:100">📞</a>
+            </div>
+        </div>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/xYyc28h.jpeg" alt="Emergency Icon">
+                <div>
+                    <h2>1091</h2>
+                    <h2>Women Helpline</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:1091">📞</a>
+            </div>
+        </div>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/yJaRy56.jpeg" alt="Emergency Icon">
+                <div>
+                    <h2>1098</h2>
+                    <h2>Child Helpline</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:1098">📞</a>
+            </div>
+        </div>
+        <div class="helpline-card">
+            <div class="helpline-card-content">
+                <img src="https://i.imgur.com/au6MNCY.jpeg" alt="Emergency Icon">
+                <div>
+                    <h2>1073</h2>
+                    <h2>Road Accident</h2>
+                </div>
+            </div>
+            <div class="helpline-card-action">
+                <a href="tel:1073">📞</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="mapContainer" style="display: none;">
+        <h1>Safe Areas</h1>
+
+        <div class="map">
+
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d81795.26199454325!2d79.04079634447812!3d21.160430687931132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1shospitals%20%26%20clinics%20in%20nidia!5e0!3m2!1sen!2sin!4v1744188811848!5m2!1sen!2sin"
+                width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-name">
+            <h2> <em>hospital</em></h2>
+        </div>
+        <div class="map">
+
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d59533.893794944044!2d79.05462631132853!3d21.157636370663546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1spolice%20station!5e0!3m2!1sen!2sin!4v1744184218117!5m2!1sen!2sin"
+                width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-name">
+            <h2> <em>Police Station</em></h2>
+        </div>
+        <div class="map">
+
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d59533.3002236658!2d79.05577176895116!3d21.15911234499939!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1spublic%20places!5e0!3m2!1sen!2sin!4v1744183583919!5m2!1sen!2sin"
+                width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-name">
+            <h2> <em>Public Places</em></h2>
+        </div>
+    </div>
+
+    <!-- New About Us section -->
+    <div class="about">
+        <div id="aboutUsContent" style="display: none;" class="container">
+            <div class="about-text">
+                <h3>About Suraksha Kawach</h1>
+                    <p>Suraksha Kawach is dedicated to ensuring women's safety and security through innovative
+                        technology and community support. Our mission is to empower women by providing real-time safety
+                        solutions, helpline support, and safe zones.</p>
+
+                    <h3>Our Vision</h2>
+                        <p>We envision a world where every woman feels safe and protected, no matter where she is. By
+                            leveraging technology and public awareness, we strive to create a safer environment for all.
+                        </p>
+                        <br>
+                        <h3>OBJECTIVES</h3>
+                        <p>The objective of Suraksha Kawach is to provide women with safety and empowerment through
+                            protection measures, accessible services, and technological support. Our mission focuses on
+                            both prevention and response to ensure holistic safety.</p>
+
+                        <div class="objectives">
+                            <div class="objective-item">
+                                <h4>01</h4>
+                                <p>Provide immediate and comprehensive support to women affected by violence and
+                                    distress.</p>
+                            </div>
+                            <div class="objective-item">
+                                <h4>02</h4>
+                                <p>Establish quality mechanisms for protection, rescue, and rehabilitation for women in
+                                    need.</p>
+                            </div>
+                            <div class="objective-item">
+                                <h4>03</h4>
+                                <p>Enhance accessibility to government and safety services for women at various levels.
+                                </p>
+                            </div>
+                            <div class="objective-item">
+                                <h4>04</h4>
+                                <p>Strengthen capacity building and training of officials under different safety
+                                    schemes.</p>
+                            </div>
+                        </div>
+                    </h3>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+
+    <!--
+    contact us
+    -->
+
+    <div class="container" id="contactUs" style="display: none; color: #4b0082;">
+        <h2>Contact Us</h2>
+        <p>If you have any questions, concerns, or need assistance, please reach out to us.</p>
+        <div class="contact-form">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea rows="5" placeholder="Your Message" required></textarea>
+            <button type="submit" class="contact-button">Send Message</button>
+        </div>
+    </div>
+
+    <!-- New Login section -->
+
+    <div id="login" style="display: none;">
+        <div class="login-text" id="formContainer">
+            <h2 id="formTitle">Login</h2>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                    <div id="usernameError" class="error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <div id="passwordError" class="error"></div>
+                    <div class="form-group">
+                        <input type="checkbox" id="showPassword">
+                        <label for="showPassword" style="text-align: center;">Show Password</label>
+                    </div>
+                </div>
+              <a href='/#'><button type="submit" id="submitButton" >Login</button></a>
+                
+            </form>
+            <div class="social-login">
+                <button class="social-button google" id="googleLogin"><img src="https://i.imgur.com/0VTgkb0.png"
+                        alt="Google"> Continue with Google</button>
+                <button class="social-button microsoft" id="microsoftLogin"><img src="https://i.imgur.com/XoLayWe.png"
+                        alt="Microsoft"> Continue with Microsoft
+                    Account</button>
+                <button class="social-button phone" id="phoneLogin"><img src="https://i.imgur.com/XUVnoSX.png" alt="Phone"> Continue with phone</button>
+
+
+            </div>
+            <p class="message">Not registered? <a href="#" id="toggleForm">Create an account</a></p>
+        </div>
+
+
+    </div>
+    <footer>
+        <p>© 2025 Suraksha Kawach | All Rights Reserved</p>
+    </footer>
+    <script>
+        // Storage for emergency contacts
+        let emergencyContacts = [];
+
+        // Function to show SOS content
+        function showSOS() {
+            document.getElementById('homeContent').style.display = 'none';
+            document.getElementById('sosContent').style.display = 'block';
+            document.getElementById('helplineContent').style.display = 'none';
+            document.getElementById('mapContainer').style.display = 'none';
+            document.getElementById('aboutUsContent').style.display = 'none';
+            document.getElementById('contactUs').style.display = 'none'; // Hide Contact Us
+            document.getElementById('login').style.display = 'none'; // Hide Login
+        }
+
+        // Function to show home content
+        function showHome() {
+            document.getElementById('homeContent').style.display = 'block';
+            document.getElementById('sosContent').style.display = 'none';
+            document.getElementById('helplineContent').style.display = 'none';
+            document.getElementById('mapContainer').style.display = 'none';
+            document.getElementById('aboutUsContent').style.display = 'none';
+            document.getElementById('contactUs').style.display = 'none'; // Hide Contact Us
+            document.getElementById('login').style.display = 'none'; // Hide Login
+        }
+
+        // Function to show helpline content
+        function showHelpline() {
+            document.getElementById('homeContent').style.display = 'none';
+            document.getElementById('sosContent').style.display = 'none';
+            document.getElementById('helplineContent').style.display = 'block';
+            document.getElementById('mapContainer').style.display = 'none';
+            document.getElementById('aboutUsContent').style.display = 'none';
+            document.getElementById('contactUs').style.display = 'none'; // Hide Contact Us
+            document.getElementById('login').style.display = 'none'; // Hide Login
+        }
+
+        // Function to show map content
+        function showMap() {
+            document.getElementById('homeContent').style.display = 'none';
+            document.getElementById('sosContent').style.display = 'none';
+            document.getElementById('helplineContent').style.display = 'none';
+            document.getElementById('mapContainer').style.display = 'block';
+            document.getElementById('aboutUsContent').style.display = 'none';
+            document.getElementById('contactUs').style.display = 'none'; // Hide Contact Us
+            document.getElementById('login').style.display = 'none'; // Hide Login
+
+            // Get the user's location
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                // Create the map
+                const map = L.map('map').setView([lat, lon], 13);
+
+                // Add the tile layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+                    subdomains: ['a', 'b', 'c']
+                }).addTo(map);
+
+                // Add a marker for the user's location
+                L.marker([lat, lon]).addTo(map)
+                    .bindPopup('You are here!')
+                    .openPopup();
+            }, () => {
+                alert("Unable to retrieve your location.");
+            });
+        }
+
+        // Function to show About Us content
+        function showAboutUS() {
+            document.getElementById('homeContent').style.display = 'none';
+            document.getElementById('sosContent').style.display = 'none';
+            document.getElementById('helplineContent').style.display = 'none';
+            document.getElementById('mapContainer').style.display = 'none';
+            document.getElementById('aboutUsContent').style.display = 'block';
+            document.getElementById('contactUs').style.display = 'none'; // Show Contact Us
+            document.getElementById('login').style.display = 'none'; // Hide Login
+        }
+        // Function to show Contact Us content
+        function showContactUs() {
+            document.getElementById('homeContent').style.display = 'none';
+            document.getElementById('sosContent').style.display = 'none';
+            document.getElementById('helplineContent').style.display = 'none';
+            document.getElementById('mapContainer').style.display = 'none';
+            document.getElementById('aboutUsContent').style.display = 'none';
+            document.getElementById('contactUs').style.display = 'block'; // Show Contact Us
+            document.getElementById('login').style.display = 'none'; // Hide Login
+        }
+
+        // Function to show Login content
+        function showLogin() {
+            document.getElementById('homeContent').style.display = 'none';
+            document.getElementById('sosContent').style.display = 'none';
+            document.getElementById('helplineContent').style.display = 'none';
+            document.getElementById('mapContainer').style.display = 'none';
+            document.getElementById('aboutUsContent').style.display = 'none';
+            document.getElementById('contactUs').style.display = 'none'; // Hide Contact Us
+            document.getElementById('login').style.display = 'block'; // Show Login
+        }
+
+        // Function to add emergency contact
+        function addContact() {
+            const nameInput = document.getElementById('contactName');
+            const numberInput = document.getElementById('contactNumber');
+            const contactsList = document.getElementById('contactsList');
+            const messageDiv = document.getElementById('message');
+
+            // Validate inputs
+            if (!nameInput.value || !numberInput.value) {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Please enter both name and number';
+                return;
+            }
+
+            // Create contact object
+            const contact = {
+                name: nameInput.value,
+                number: numberInput.value
+            };
+
+            // Add to contacts array
+            emergencyContacts.push(contact);
+
+            // Create contact list item
+            const contactItem = document.createElement('div');
+            contactItem.classList.add('contact-item');
+            contactItem.innerHTML = `
+                ${contact.name} - ${contact.number}
+                <button onclick="removeContact(this)">❌</button>
+            `;
+
+            // Append to contacts list
+            contactsList.appendChild(contactItem);
+
+            // Clear inputs
+            nameInput.value = '';
+            numberInput.value = '';
+
+            // Show success message
+            messageDiv.style.color = 'green';
+            messageDiv.textContent = 'Contact Added Successfully!';
+        }
+
+        // Function to remove contact
+        function removeContact(button) {
+            const contactItem = button.parentElement;
+            contactItem.remove();
+
+            // Update contacts array
+            const contactText = contactItem.textContent.split(' - ');
+            emergencyContacts = emergencyContacts.filter(
+                contact => contact.name !== contactText[0]
+            );
+        }
+
+        // Function to send SOS alert
+        function sendSOSAlert() {
+            const messageDiv = document.getElementById('message');
+
+            // Check if contacts exist
+            if (emergencyContacts.length === 0) {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Please add emergency contacts first';
+                return;
+            }
+
+            // Construct emergency message
+            const sosMessage = `🚨 EMERGENCY ALERT! 
+I am in trouble!`;
+
+            // Simulate sending alerts to all contacts
+            emergencyContacts.forEach(contact => {
+                // In a real app, this would use a server or SMS API
+                console.log(`Sending SOS to ${contact.name} at ${contact.number}`);
+                console.log(sosMessage); // Log the message being sent
+            });
+
+            // Display success message
+            messageDiv.style.color = 'green';
+            messageDiv.textContent = `SOS Alert sent to ${emergencyContacts.length} contacts!`;
+        }
+    </script>
+
+
+    <script>
+        const formContainer = document.getElementById('formContainer');
+        const formTitle = document.getElementById('formTitle');
+        const authForm = document.getElementById('authForm');
+        const toggleForm = document.getElementById('toggleForm');
+        const submitButton = document.getElementById('submitButton');
+        const showPasswordCheckbox = document.getElementById('showPassword');
+
+        let isLogin = true; // Track whether the form is for login or registration
+
+        toggleForm.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (isLogin) {
+                formTitle.textContent = 'Create Account';
+                submitButton.textContent = 'Register';
+                toggleForm.textContent = 'Already have an account? Login';
+                clearForm();
+            } else {
+                formTitle.textContent = 'Login';
+                submitButton.textContent = 'Login';
+                toggleForm.textContent = 'Not registered? Create an account';
+                clearForm();
+            }
+            isLogin = !isLogin; // Toggle the form state
+        });
+
+        authForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the form from submitting
+
+            // Clear previous error messages
+            document.getElementById('usernameError').textContent = '';
+            document.getElementById('passwordError').textContent = '';
+            document.getElementById('loginError').textContent = '';
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            let hasError = false;
+
+            // Basic validation
+            if (username === '') {
+                document.getElementById('usernameError').textContent = 'Username is required.';
+                hasError = true;
+            }
+
+            if (password === '') {
+                document.getElementById('passwordError').textContent = 'Password is required.';
+                hasError = true;
+            }
+
+            if (!hasError) {
+                if (isLogin) {
+                    // Simulate login
+                    const storedPassword = localStorage.getItem(username);
+                    if (storedPassword && storedPassword === password) {
+                        alert('Login successful! Redirecting to dashboard...');
+                        window.location.href = 'index.html';
+                    } else {
+                        document.getElementById('loginError').textContent = 'Invalid username or password.';
+                    }
+                } else {
+                    // Simulate registration
+                    if (localStorage.getItem(username)) {
+                        document.getElementById('loginError').textContent = 'Username already exists.';
+                    } else {
+                        localStorage.setItem(username, password);
+                        alert('Registration successful! You can now log in.');
+                        toggleForm.click(); // Switch to login form
+                    }
+                }
+            }
+        });
+
+        showPasswordCheckbox.addEventListener('change', function () {
+            const passwordField = document.getElementById('password');
+            passwordField.type = this.checked ? 'text' : 'password';
+        });
+
+        document.getElementById('googleLogin').addEventListener('click', function () {
+            // Simulate Google login
+            const username = prompt('Enter your Google email:');
+            if (username) {
+                alert('Simulating Google login for ' + username + '...');
+                // Here you would integrate with Google OAuth
+                // For demonstration, we assume login is successful
+                alert('Google login successful! Redirecting to dashboard...');
+                window.location.href = 'index.html';
+            }
+        });
+
+        document.getElementById('microsoftLogin').addEventListener('click', function () {
+            // Simulate Microsoft login
+            const username = prompt('Enter your Microsoft email:');
+            if (username) {
+                alert('Simulating Microsoft login for ' + username + '...');
+                // Here you would integrate with Microsoft OAuth
+                // For demonstration, we assume login is successful
+                alert('Microsoft login successful! Redirecting to dashboard...');
+                window.location.href = 'index.html';
+            }
+        });
+
+        document.getElementById('phoneLogin').addEventListener('click', function () {
+            const phoneNumber = prompt('Please enter your phone number:');
+            if (phoneNumber) {
+                const verificationCode = Math.floor(1000 + Math.random() * 9000); // Generate a random 4-digit code
+                alert('A verification code has been sent to ' + phoneNumber + ': ' + verificationCode);
+                const userCode = prompt('Enter the verification code:');
+                if (userCode == verificationCode) {
+                    alert('Phone login successful! Redirecting to dashboard...');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Invalid verification code. Please try again.');
+                }
+            }
+        });
+
+        function clearForm() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            showPasswordCheckbox.checked = false; // Reset checkbox
+        }
+    </script>
+
+
+
+
+</body>
+
+</html>
